@@ -1,0 +1,7 @@
+data/
+outputs/
+*.nii
+*.nii.gz
+*.log
+.DS_Store
+license.txt
