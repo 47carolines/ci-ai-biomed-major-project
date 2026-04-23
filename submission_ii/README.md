@@ -35,36 +35,36 @@ Navigate to the folder you have your config and private sliver key in. Enter the
 # Part 2: Installing DeepPrep and Setting up on VM
 These instructions are adapted from DeepPrep documentation: https://deepprep.readthedocs.io/en/latest/index.html
 
-## Part 2a: Installing Docker on the VM
+## 2.1: Installing Docker on the VM
 
 After successfully SSHing into the FABRIC VM, the next step is to install Docker, which is required to run DeepPrep.
 
 
-### 1. Update system packages
+### 2.1.1 Update system packages
 
 ```
 sudo apt update
 sudo apt upgrade -y
 ```
 
-### 2. Install Docker (recommended method for FABRIC VM)
+### 2.1.2 Install Docker (recommended method for FABRIC VM)
 
 Since the VM is Ubuntu 20.04, Docker can be installed directly from the Ubuntu package manager:
 `sudo apt install -y docker.io`
 
-### 3. Start and enable Docker service
+### 2.1.3 Start and enable Docker service
 ```
 sudo systemctl start docker
 sudo systemctl enable docker
 ```
 
-### 4. Verify Docker installation
+### 2.1.4 Verify Docker installation
 
 Run the following command to confirm Docker is working correctly:
 `docker run hello-world`
 
 
-### 4.1 Fixing Docker Permission Denied Error
+### 2.1.5 Fixing Docker Permission Denied Error
 
 After installing Docker, you may encounter the following error when running a Docker command:
 
@@ -94,12 +94,39 @@ Then verify Docker works without sudo:
 
 `docker run hello-world`
 
-Notes
+## 2.2 Pulling and Testing the DeepPrep Docker Image
 
-* You must log out and log back in for the group change to persist across sessions.
-* If Docker was installed correctly, this issue is purely a permissions configuration problem, not an installation failure.
-* For time-sensitive setups (e.g., running DeepPrep), using sudo docker ... is sufficient.
+After Docker has been installed and verified on the VM, the next step is to download and test the DeepPrep container.
 
+---
+
+### 2.2.1 Pull the DeepPrep Docker image
+
+Run the following command to download the DeepPrep image from DockerHub:
+
+`docker pull pbfslab/deepprep:25.1.0`
+
+### 2.2.2 Run the Docker image (test execution)
+To verify that the container is functioning correctly, run:
+`docker run --rm pbfslab/deepprep:25.1.0`
+
+### 2.2.3 Expected output
+
+If the image was successfully pulled and executed, the terminal should display usage information similar to the following:
+```
+INFO: args:
+DeepPrep args:
+deepprep-docker [bids_dir] [output_dir] [{participant}] [--bold_task_type '[task1 task2 task3 ...]']
+                [--fs_license_file PATH] [--participant_label '[001 002 003 ...]']
+                [--subjects_dir PATH] [--skip_bids_validation]
+                [--anat_only] [--bold_only] [--bold_sdc] [--bold_confounds] [--bold_skip_frame 0]
+                [--bold_cifti] [--bold_surface_spaces '[None fsnative fsaverage fsaverage6 ...]']
+                [--bold_volume_space {None MNI152NLin6Asym MNI152NLin2009cAsym}]
+                [--bold_volume_res {02 03...}]
+                [--device {auto 0 1 2... cpu}]
+                [--cpus 10] [--memory 20]
+                [--ignore_error] [--resume]
+```                
 
 ## 📌 Prerequisites / Assumptions
 
