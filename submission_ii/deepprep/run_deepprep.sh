@@ -11,7 +11,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
 
-DATA_DIR="$PROJECT_ROOT/data/ds006628"
+DATA_DIR="$PROJECT_ROOT/data/test_sample"
 OUTPUT_DIR="$PROJECT_ROOT/outputs/deepprep_results"
 LICENSE_FILE="$PROJECT_ROOT/license.txt"
 
@@ -50,7 +50,7 @@ docker run --rm \
   /output \
   participant \
   --participant_label sub-01 \
-  --bold_task_type response feature dimension \
+  --bold_task_type 6cat \
   --fs_license_file /fs_license.txt \
   --device cpu
 
