@@ -32,6 +32,75 @@ ssh -F <path to SSH config file> -i <path to private sliver key> ubuntu@2001:194
 Navigate to the folder you have your config and private sliver key in. Enter the SSH command and you should be inside the node.
 ![alt text](image.png)
 
+# Part 2: Installing DeepPrep and Setting up on VM
+These instructions are adapted from DeepPrep documentation: https://deepprep.readthedocs.io/en/latest/index.html
+
+## Part 2a: Installing Docker on the VM
+
+After successfully SSHing into the FABRIC VM, the next step is to install Docker, which is required to run DeepPrep.
+
+
+### 1. Update system packages
+
+```
+sudo apt update
+sudo apt upgrade -y
+```
+
+### 2. Install Docker (recommended method for FABRIC VM)
+
+Since the VM is Ubuntu 20.04, Docker can be installed directly from the Ubuntu package manager:
+`sudo apt install -y docker.io`
+
+### 3. Start and enable Docker service
+```
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+### 4. Verify Docker installation
+
+Run the following command to confirm Docker is working correctly:
+`docker run hello-world`
+
+
+### 4.1 Fixing Docker Permission Denied Error
+
+After installing Docker, you may encounter the following error when running a Docker command:
+
+`permission denied while trying to connect to the Docker daemon socket`
+
+This occurs because the current user does not have permission to access the Docker daemon.
+
+### Temporary fix (recommended for immediate use)
+
+Use sudo to run Docker commands:
+
+`sudo docker run hello-world`
+
+This allows Docker to run without changing system permissions.
+
+### Permanent fix (recommended setup)
+
+To allow Docker to run without sudo, add your user to the Docker group:
+
+`sudo usermod -aG docker $USER`
+
+Apply the group changes immediately:
+
+`newgrp docker`
+
+Then verify Docker works without sudo:
+
+`docker run hello-world`
+
+Notes
+
+* You must log out and log back in for the group change to persist across sessions.
+* If Docker was installed correctly, this issue is purely a permissions configuration problem, not an installation failure.
+* For time-sensitive setups (e.g., running DeepPrep), using sudo docker ... is sufficient.
+
+
 ## 📌 Prerequisites / Assumptions
 
 This README assumes the user is already operating inside the `submission_ii/` directory.
