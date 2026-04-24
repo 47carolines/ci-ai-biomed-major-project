@@ -17,6 +17,24 @@ Step 2: Add Nodes Section
 * Disk (GB): 100
 * OS Image: Ubuntu 20
 
+---
+### GPU Support (Optional)
+
+DeepPrep supports GPU acceleration for certain deep-learning components
+(e.g., segmentation and morphing models). If a CUDA-enabled GPU is available
+and properly configured on the system, users may enable GPU execution using:
+
+--gpus all --device auto
+
+However, CPU-only execution is fully supported and is the default configuration
+used in this setup to ensure compatibility across FABRIC VM environments.
+
+In that case you would add:
+* Component Type: GPU
+* Name: sub-ii-gpu
+* Model: A40
+---
+
 Step 4: Create Slice Section
 * Slice Name: test_slice
 * SSH Keys: fabric-sliver-key
@@ -285,3 +303,56 @@ Output will be stored in:
 ```
 ~/deepprep_project/output/
 ```
+
+## ⏱️ Runtime Considerations
+
+DeepPrep is a computationally intensive neuroimaging preprocessing pipeline. Execution time depends on available CPU resources, memory allocation, and dataset size.
+
+For the single-subject BIDS test dataset used in this project, runtime on a CPU-based FABRIC VM is expected to be on the order of tens of minutes to a few hours.
+
+The pipeline is executed as a multi-stage workflow (Nextflow-based), meaning:
+
+* Progress is not strictly linear
+* Some stages may complete quickly while others take significantly longer
+* The terminal output may appear static for extended periods while long-running tasks execute in the background
+
+This behavior is expected and does not indicate failure.
+
+## 🔍 Monitoring Execution
+
+Once the pipeline is running, progress can be monitored through a separate SSH session without interfering with execution. This is useful for long-running workflows where updates are intermittent.
+
+Check active processes
+
+`ps aux | grep deepprep`
+
+Monitor system resource usage
+
+`top`
+
+Inspect output directory growth
+
+`ls -lh ~/deepprep_project/output`
+
+Continuous monitoring (recommended)
+
+`watch -n 10 ls -lh ~/deepprep_project/output`
+
+What each part means
+
+* watch
+    Runs a command repeatedly and refreshes the screen.
+* -n 10
+    Refresh every 10 seconds
+* ls -lh ~/deepprep_project/output
+    Lists files in your output folder in:
+    * -l → detailed format (permissions, size, time)
+    * -h → human-readable sizes (KB, MB, GB)
+
+How to stop it
+
+Just press:
+
+`Ctrl + C`
+
+These checks help confirm that the pipeline is actively running even if the log output in the primary terminal appears unchanged for a period of time.
