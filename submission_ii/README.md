@@ -127,23 +127,121 @@ deepprep-docker [bids_dir] [output_dir] [{participant}] [--bold_task_type '[task
                 [--cpus 10] [--memory 20]
                 [--ignore_error] [--resume]
 ```                
+## 2.3 Running DeepPrep on the FABRIC VM
 
-## 📌 Prerequisites / Assumptions
+Once Docker is installed (Section 2.1) and the DeepPrep image has been successfully pulled and verified (Section 2.2), you are ready to run the preprocessing pipeline on the VM.
 
-This README assumes the user is already operating inside the `submission_ii/` directory.
+This project uses a wrapper script (run_deepprep.sh) to simplify execution of the DeepPrep Docker container on FABRIC.
 
-All relative paths in commands (e.g., `cd deepprep`, `./run_deepprep.sh`) are based on this working directory.
+### 🏃‍♀️ 2.3.1 Quick Start (test dataset)
+Get started with a test_sample, using curl to download test sample file.
 
-The following files and folders are expected to exist:
+```
+curl -C - -O https://download.anning.info/ninganme-public/DeepPrep/TestDataset/test_sample.zip
+```
+### 📦 Unzip the dataset
+```
+sudo apt install unzip
+unzip test_sample.zip
+```
+This will create a BIDS-formatted directory containing:
 
-- `deepprep/` (contains `run_deepprep.sh`)
-- `data/` (BIDS-formatted dataset)
-- `outputs/` (auto-generated during execution)
-- `license.txt` (FreeSurfer license file)
-## ⚙️ Execution / Reproducibility
+* 1 subject
+* 1 anatomical image
+* 2 functional (BOLD) runs
 
-To run the DeepPrep preprocessing pipeline, navigate into the DeepPrep directory and execute the provided script:
+### 📁 Example structure
+```
+test_sample/
+├── sub-01/
+│   ├── anat/
+│   └── func/
+└── dataset_description.json
+```
 
-```bash
-cd deepprep
-bash run_deepprep.sh
+## 2.3.2 Requirements (license + assumptions)
+
+### 🔑 FreeSurfer License Setup
+
+DeepPrep requires a valid FreeSurfer license to run preprocessing steps.
+
+If you do not already have one, you can obtain it for free by registering here:
+
+👉 https://surfer.nmr.mgh.harvard.edu/registration.html
+
+
+### 📁 Place the license on the VM
+
+After downloading, copy your license file into the project directory:
+
+```
+mkdir -p ~/deepprep_project/license
+cp ~/freesurfer/license.txt ~/deepprep_project/license/
+```
+
+Your file should now be located at:
+
+```~/deepprep_project/license/license.txt```
+
+
+### 🧠 Why this is required
+
+DeepPrep uses FreeSurfer internally for:
+
+* anatomical reconstruction
+* surface registration
+* segmentation steps
+
+Without a valid license, the pipeline will fail during preprocessing.
+
+
+### 📌 How it is used in Docker
+
+The license is mounted into the container:
+
+`-v $FS_LICENSE:/fs_license.txt`
+
+Inside the container, DeepPrep expects:
+
+`/fs_license.txt`
+
+
+### ⚠️ Important note (this is where students usually mess up)
+
+Make sure:
+
+* the file is named exactly license.txt
+* it is not empty
+* it is readable:
+
+`chmod 644 ~/deepprep_project/license/license.txt`
+
+
+## 2.3.3 📁 VM Folder Setup
+
+After downloading the test dataset, organize your workspace on the VM as follows. You will have to copy `license.txt` and `run_deepprep.sh` from your local machine.
+```
+~/deepprep_project/
+├── data/
+│   ├── test_sample/
+├── output/
+├── license/
+│   └── license.txt
+├── scripts/
+│   └── run_deepprep.sh
+```
+
+Here are some example ways to do that:
+```
+mkdir -p ~/deepprep_project/data/test_sample
+mv ~/sub-01 ~/deepprep_project/data/test_sample/
+mv ~/dataset_description.json ~/deepprep_project/data/test_sample/
+mv ~/README ~/deepprep_project/data/test_sample/
+```
+
+Verify setup with tree:
+```
+sudo apt install tree
+tree ~/deepprep_project/
+```
+
