@@ -45,10 +45,10 @@ Once the slice status is Green or StableOk, click the white square which is your
 ```
 ssh -F <path to SSH config file> -i <path to private sliver key> ubuntu@2001:1948:417:7:f816:3eff:fe92:eb83
 ```
-![alt text](<Screenshot 2026-04-08 at 19.54.12.png>)
+![alt text](<assets/stable-slice.png>)
 
 Navigate to the folder you have your config and private sliver key in. Enter the SSH command and you should be inside the node.
-![alt text](image.png)
+![alt text](assets/ssh-success.png)
 
 # Part 2: Installing DeepPrep and Setting up on VM
 These instructions are adapted from DeepPrep documentation: https://deepprep.readthedocs.io/en/latest/index.html
