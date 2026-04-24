@@ -356,3 +356,36 @@ Just press:
 `Ctrl + C`
 
 These checks help confirm that the pipeline is actively running even if the log output in the primary terminal appears unchanged for a period of time.
+
+## 📊 2.3.8 Collecting and Verifying Results
+
+After pipeline completion, the primary outputs used for submission are located in:
+
+`~/deepprep_project/output/QC/`
+
+where QC stands for Quality control.
+
+### 📁 Key deliverables
+
+The following files are used to evaluate successful execution:
+
+- `report.html` → primary QC report summarizing preprocessing results
+- `timeline.html` → execution timeline and workflow breakdown
+- `dataset_description.json` → dataset metadata
+
+### 🧪 Verification steps
+
+A successful run is confirmed by:
+
+- Presence of completed QC HTML reports
+- No failed or running processes in terminal output
+- Final message indicating successful pipeline completion (e.g., “DeepPrep completed successfully”)
+- Output directory populated with subject results
+
+### 📌 Optional evidence
+
+For documentation purposes, the following may also be included:
+
+- Screenshot of `tree ~/deepprep_project/output`
+- Screenshot of successful completion log
+- QC report HTML opened in browser
