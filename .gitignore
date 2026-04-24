@@ -5,3 +5,44 @@ outputs/
 *.log
 .DS_Store
 license.txt
+
+# =========================
+# DeepPrep / neuroimaging outputs
+# =========================
+
+output/
+outputs/
+deepprep_project/output/
+**/WorkDir/
+**/work/
+**/Recon/
+**/BOLD/
+**/QC/full/
+**/freesurfer/
+**/fsaverage*
+**/*.mgz
+**/*.nii
+**/*.nii.gz
+
+# large intermediate pipeline artifacts
+**/*.tar
+**/*.tar.gz
+**/*.zip
+
+# =========================
+# system / environment
+# =========================
+.DS_Store
+*.log
+
+# =========================
+# python
+# =========================
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# =========================
+# optional local configs
+# =========================
+.env
