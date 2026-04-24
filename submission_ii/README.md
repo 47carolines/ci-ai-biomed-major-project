@@ -245,3 +245,43 @@ sudo apt install tree
 tree ~/deepprep_project/
 ```
 
+## ▶️ 2.3.5 Running DeepPrep
+
+Make sure your script is executable:
+```
+chmod +x ~/deepprep_project/scripts/run_deepprep.sh
+```
+
+Run the pipeline:
+```
+cd ~/deepprep_project/scripts
+./run_deepprep.sh
+```
+
+## ⚙️ 2.3.6 What the Script Does
+
+The run_deepprep.sh script:
+
+* Validates dataset structure (BIDS format)
+* Checks FreeSurfer license
+* Mounts input/output directories into Docker
+* Runs DeepPrep preprocessing pipeline
+* Processes subject sub-01 using task 6cat
+* Outputs results to:
+  
+```
+~/deepprep_project/output/
+```
+
+## 📌 2.3.7 Expected Output
+
+If successful, DeepPrep will generate:
+
+* Preprocessed anatomical outputs
+* Preprocessed BOLD fMRI outputs
+* QC reports and derivatives
+
+Output will be stored in:
+```
+~/deepprep_project/output/
+```
