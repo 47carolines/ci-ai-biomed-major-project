@@ -90,7 +90,13 @@ docker run --rm \
   --fs_license_file /fs_license.txt \
   --device "$DEVICE_FLAG" \
   --cpus "$CPUS" \
-  --memory "$MEMORY"
+  --memory "$MEMORY" \
+  --bold_task_type rest \
+  --bold_sdc \
+  --bold_confounds \
+  --bold_volume_space MNI152NLin2009cAsym \
+  --bold_volume_res 02 \
+  --bold_surface_spaces 'fsaverage6'
 
 echo "======================================"
 echo "DeepPrep completed successfully"
