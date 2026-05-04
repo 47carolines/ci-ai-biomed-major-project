@@ -192,9 +192,19 @@ Scott:
 - sub-NDARINVUY799LKJ
 - sub-NDARINVWD338PY2
 
+#### 📌 Execution rule
+
+Each team member is responsible for:
+
+* editing download_subjects.sh
+* inserting their assigned subject IDs
+* running the script to populate data/ds005237/
+
+This ensures no overlap and reproducible subject-level processing.
+
 ### 2.3.1 📦 Dataset Acquisition Strategy (ds005237)
 
-We use AWS CLI to download only the required OpenNeuro subjects from ds005237. This avoids downloading the full dataset.
+We use AWS CLI to populate ~/deepprep_project/data/ds005237/ with only the assigned subjects for each team member. This avoids downloading the full dataset.
 
 #### ⚙️ Step 1: Install AWS CLI (if not already installed)
 ```
@@ -277,27 +287,30 @@ Make sure:
 
 ## 2.3.3 📁 VM Folder Setup
 
-After downloading the test dataset, organize your workspace on the VM as follows. You will have to copy `license.txt` and `run_deepprep.sh` from your local machine.
+After downloading the test dataset, organize your workspace on the VM as follows. You will have to copy `license.txt`, `run_deepprep.sh`, and `download_subjects.sh` from your local machine. Just type `vi license.txt` to create a new file called `license.txt` and paste in the content from the local copy. 
+
+On the FABRIC VM, we maintain a clean BIDS-style project directory:
 ```
 ~/deepprep_project/
 ├── data/
 │   └── ds005237/
-│       ├── sub-XXXX/
-│       ├── sub-YYYY/
+│       ├── sub-<participant_id>/
 │       ├── dataset_description.json
 │       └── participants.tsv
 ├── output/
 ├── license/
+│   └── license.txt
 ├── scripts/
+│   ├── run_deepprep.sh
+│   └── download_subjects.sh
 ```
 
-Here are some example ways to do that:
-```
-mkdir -p ~/deepprep_project/data/test_sample
-mv ~/sub-01 ~/deepprep_project/data/test_sample/
-mv ~/dataset_description.json ~/deepprep_project/data/test_sample/
-mv ~/README ~/deepprep_project/data/test_sample/
-```
+### 📌 Key design principles
+
+* data/ → only raw BIDS inputs (ds005237 subset)
+* output/ → all DeepPrep derivatives
+* license/ → FreeSurfer license only
+* scripts/ → all reproducible automation (no manual commands)
 
 Verify setup with tree:
 ```
