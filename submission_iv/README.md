@@ -153,41 +153,69 @@ This project uses a wrapper script (run_deepprep.sh) to simplify execution of th
 
 ## 📦 Dataset Strategy (ds005237)
 
-The full ds005237 dataset is large (~200+ participants). For this project:
+The full ds005237 dataset is large and will NOT be fully downloaded or processed on FABRIC due to compute and storage constraints.
 
-* We do NOT download or preprocess the full dataset on FABRIC
-* Instead, we process only selected subjects (team members)
+Instead, we use a subset-based workflow:
 
-Recommended approach:
-- Keep full dataset locally or on OpenNeuro
-- Copy only required subjects into FABRIC VM
+* Each team member processes assigned subjects only
+* Subjects are downloaded individually from OpenNeuro (or S3)
+* Each subject is run independently using DeepPrep
 
 Example:
+
 sub-NDARINVAG023WG3
+
 sub-NDARINVAG339WHH
+
 sub-NDARINV...
 
 Each participant is run individually using:
 
 `./run_deepprep.sh <participant_id>`
 
-### 2.3.1 📥 Dataset Access (OpenNeuro ds005237)
+## 👥 Subject Assignment (Team Use Only)
 
-This dataset can be accessed directly from OpenNeuro or via AWS S3.
+To keep processing organized, each team member is responsible for a subset of participants.
 
-We recommend:
+Caroline:
+- sub-NDARINVAG023WG3
+- sub-NDARINVAG339WHH
+- sub-NDARINVZX212UNE
 
-Option 1 (simplest):
-Download only required subjects manually from OpenNeuro:
-https://openneuro.org/datasets/ds005237
+Noor:
+- sub-NDARINVUR466KN5
+- sub-NDARINVJP343BJ6
+- sub-NDARINVFH503ZWA
 
-Option 2 (advanced / optional):
-Use AWS CLI for batch download:
+Scott:
+- sub-NDARINVKX727WL8
+- sub-NDARINVUY799LKJ
+- sub-NDARINVWD338PY2
+
+### 2.3.1 📦 Dataset Acquisition Strategy (ds005237)
+
+We use AWS CLI to download only the required OpenNeuro subjects from ds005237. This avoids downloading the full dataset.
+
+#### ⚙️ Step 1: Install AWS CLI (if not already installed)
 ```
-aws s3 cp --no-sign-request --recursive \
-s3://openneuro.org/ds005237/sub-NDARINVXXXX \
-~/deepprep_project/data/ds005237/sub-NDARINVXXXX
+sudo apt update
+sudo apt install -y awscli
 ```
+#### 📁 Step 2: Create download script on the VM
+
+Inside your project directory:
+```
+cd ~/deepprep_project/scripts
+nano download_subjects.sh
+```
+
+Paste the template found in this repository called `download_subjects.sh`. Update the `SUBJECTS` array to include your specific assigned subjects.
+
+#### ▶️ Step 3: Make it executable
+`chmod +x download_subjects.sh`
+
+#### ▶️ Step 4: Run download
+`./download_subjects.sh`
 
 ## 2.3.2 Requirements (license + assumptions)
 
@@ -253,12 +281,14 @@ After downloading the test dataset, organize your workspace on the VM as follows
 ```
 ~/deepprep_project/
 ├── data/
-│   ├── test_sample/
+│   └── ds005237/
+│       ├── sub-XXXX/
+│       ├── sub-YYYY/
+│       ├── dataset_description.json
+│       └── participants.tsv
 ├── output/
 ├── license/
-│   └── license.txt
 ├── scripts/
-│   └── run_deepprep.sh
 ```
 
 Here are some example ways to do that:
