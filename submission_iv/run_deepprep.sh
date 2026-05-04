@@ -2,10 +2,20 @@
 
 # ==============================
 # DeepPrep Pipeline Runner
-# Submission II - CI-AI Project
+# Submission II - CI-AI Project (UPDATED FOR ds005237 + SCALE)
 # ==============================
 
 set -e
+
+# ------------------------------
+# INPUT ARGUMENT (IMPORTANT FOR 10-NODE SCALE)
+# ------------------------------
+if [ -z "$1" ]; then
+  echo "ERROR: Please provide a participant ID (e.g., sub-NDARINVXXXX)"
+  exit 1
+fi
+
+PARTICIPANT="$1"
 
 # ------------------------------
 # PATH SETUP
@@ -14,12 +24,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
 
-DATA_DIR="$PROJECT_ROOT/data/test_sample"
+DATA_DIR="$PROJECT_ROOT/data/ds005237"
 OUTPUT_DIR="$PROJECT_ROOT/output"
 LICENSE_FILE="$PROJECT_ROOT/license/license.txt"
-
-PARTICIPANT="sub-01"
-BOLD_TASK="6cat"
 
 echo "======================================"
 echo "Starting DeepPrep pipeline"
@@ -27,7 +34,6 @@ echo "Project root : $PROJECT_ROOT"
 echo "Input        : $DATA_DIR"
 echo "Output       : $OUTPUT_DIR"
 echo "Participant  : $PARTICIPANT"
-echo "Task         : $BOLD_TASK"
 echo "======================================"
 
 # ------------------------------
@@ -40,7 +46,7 @@ if [ ! -d "$DATA_DIR" ]; then
 fi
 
 if [ ! -d "$DATA_DIR/$PARTICIPANT" ]; then
-  echo "ERROR: $PARTICIPANT not found in dataset"
+  echo "ERROR: Participant not found: $PARTICIPANT"
   exit 1
 fi
 
@@ -57,25 +63,22 @@ fi
 mkdir -p "$OUTPUT_DIR"
 
 # ------------------------------
-# GPU AUTO-DETECTION (optional)
+# RESOURCE SETTINGS (FABRIC SAFE)
 # ------------------------------
 
-if command -v nvidia-smi &> /dev/null; then
-  echo "GPU detected → attempting GPU mode"
-  DEVICE_FLAG="auto"
-  GPU_FLAG="--gpus all"
-else
-  echo "No GPU detected → using CPU mode"
-  DEVICE_FLAG="cpu"
-  GPU_FLAG=""
-fi
+DEVICE_FLAG="cpu"
+CPUS=6
+MEMORY=22
+
+echo "Using CPU mode"
+echo "CPUs   : $CPUS"
+echo "Memory : $MEMORY GB"
 
 # ------------------------------
 # RUN DEEPPREP
 # ------------------------------
 
 docker run --rm \
-  $GPU_FLAG \
   -v "$DATA_DIR:/input" \
   -v "$OUTPUT_DIR:/output" \
   -v "$LICENSE_FILE:/fs_license.txt" \
@@ -84,11 +87,10 @@ docker run --rm \
   /output \
   participant \
   --participant_label "$PARTICIPANT" \
-  --bold_task_type "$BOLD_TASK" \
   --fs_license_file /fs_license.txt \
   --device "$DEVICE_FLAG" \
-  --cpus 8 \
-  --memory 28
+  --cpus "$CPUS" \
+  --memory "$MEMORY"
 
 echo "======================================"
 echo "DeepPrep completed successfully"
