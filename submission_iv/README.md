@@ -151,30 +151,42 @@ Once Docker is installed (Section 2.1) and the DeepPrep image has been successfu
 
 This project uses a wrapper script (run_deepprep.sh) to simplify execution of the DeepPrep Docker container on FABRIC.
 
-### 🏃‍♀️ 2.3.1 Quick Start (test dataset)
-Get started with a test_sample, using curl to download test sample file.
+## 📦 Dataset Strategy (ds005237)
 
-```
-curl -C - -O https://download.anning.info/ninganme-public/DeepPrep/TestDataset/test_sample.zip
-```
-### 📦 Unzip the dataset
-```
-sudo apt install unzip
-unzip test_sample.zip
-```
-This will create a BIDS-formatted directory containing:
+The full ds005237 dataset is large (~200+ participants). For this project:
 
-* 1 subject
-* 1 anatomical image
-* 2 functional (BOLD) runs
+* We do NOT download or preprocess the full dataset on FABRIC
+* Instead, we process only selected subjects (team members)
 
-### 📁 Example structure
+Recommended approach:
+- Keep full dataset locally or on OpenNeuro
+- Copy only required subjects into FABRIC VM
+
+Example:
+sub-NDARINVAG023WG3
+sub-NDARINVAG339WHH
+sub-NDARINV...
+
+Each participant is run individually using:
+
+`./run_deepprep.sh <participant_id>`
+
+### 2.3.1 📥 Dataset Access (OpenNeuro ds005237)
+
+This dataset can be accessed directly from OpenNeuro or via AWS S3.
+
+We recommend:
+
+Option 1 (simplest):
+Download only required subjects manually from OpenNeuro:
+https://openneuro.org/datasets/ds005237
+
+Option 2 (advanced / optional):
+Use AWS CLI for batch download:
 ```
-test_sample/
-├── sub-01/
-│   ├── anat/
-│   └── func/
-└── dataset_description.json
+aws s3 cp --no-sign-request --recursive \
+s3://openneuro.org/ds005237/sub-NDARINVXXXX \
+~/deepprep_project/data/ds005237/sub-NDARINVXXXX
 ```
 
 ## 2.3.2 Requirements (license + assumptions)
@@ -273,30 +285,36 @@ chmod +x ~/deepprep_project/scripts/run_deepprep.sh
 Run the pipeline:
 ```
 cd ~/deepprep_project/scripts
-./run_deepprep.sh
+./run_deepprep.sh sub-NDARINVXXXX
 ```
+You must pass a participant ID from ds005237 (e.g., sub-NDARINVAG023WG3).
 
 ## ⚙️ 2.3.6 What the Script Does
 
 The run_deepprep.sh script:
 
-* Validates dataset structure (BIDS format)
+* Validates BIDS dataset structure for ds005237
 * Checks FreeSurfer license
-* Mounts input/output directories into Docker
-* Runs DeepPrep preprocessing pipeline
-* Processes subject sub-01 using task 6cat
+* Accepts participant ID as input (ds005237 subject IDs)
+* Mounts dataset + output directories into Docker
+* Runs DeepPrep preprocessing pipeline on selected subject
+* Enables:
+  - Susceptibility Distortion Correction (SDC)
+  - Motion/Nuisance confound regression outputs
 * Outputs results to:
   
 ```
 ~/deepprep_project/output/
 ```
-
+This pipeline processes selected participants from ds005237 (OpenNeuro Transdiagnostic Connectome Project). Only specified subjects are processed to reduce compute cost and allow multi-person analysis across teammates.
 ## 📌 2.3.7 Expected Output
 
 If successful, DeepPrep will generate:
 
 * Preprocessed anatomical outputs
 * Preprocessed BOLD fMRI outputs
+* Susceptibility Distortion Corrected (SDC) data
+* Motion and nuisance regression confound outputs
 * QC reports and derivatives
 
 Output will be stored in:
