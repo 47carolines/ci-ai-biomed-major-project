@@ -1,4 +1,4 @@
-# Final Project – DeepPrep fMRI Preprocessing Pipeline
+# Final Project – DeepPrep fMRI Preprocessing Pipeline (Submission IV)
 
 # Getting setup:
 ## Part 1: Creating and SSHing into FABRIC VM
@@ -15,31 +15,17 @@ Step 2: Add Nodes Section
 * Cores: 8
 * RAM (GB): 32
 * Disk (GB): 100
-* OS Image: Ubuntu 20
+* OS Image: Ubuntu 22 
 
----
-### GPU Support (Optional)
-
-DeepPrep supports GPU acceleration for certain deep-learning components
-(e.g., segmentation and morphing models). If a CUDA-enabled GPU is available
-and properly configured on the system, users may enable GPU execution using:
-
---gpus all --device auto
-
-However, CPU-only execution is fully supported and is the default configuration
-used in this setup to ensure compatibility across FABRIC VM environments.
-
-In that case you would add:
-* Component Type: GPU
-* Name: sub-ii-gpu
-* Model: A40
----
+Click Add Node, you should see it pop up in the topology on the right hand side.
 
 Step 4: Create Slice Section
 * Slice Name: test_slice
-* SSH Keys: fabric-sliver-key
+* Lease End Time: 2026-5-15 00:00:00(1 day after final project is due)
+* SSH Keys: fabric-sliver-key (or whatever you named your sliver key)
 
-Click Create Slice when you are ready. Wait up to 2-3 minutes for the slice to provision.
+Double check your setup matches this picture and then click Create Slice when you are ready. Wait up to 2-3 minutes for the slice to provision.
+![alt text](<assets/slice-setup.png>)
 
 Once the slice status is Green or StableOk, click the white square which is your node in your topology. Then you should be able to see the SSH Command. Click the copy icon on the SSH Command it and go to a terminal on your computer. It should look something like this, but with your unique hostname:
 ```
@@ -152,6 +138,8 @@ Once Docker is installed (Section 2.1) and the DeepPrep image has been successfu
 This project uses a wrapper script (run_deepprep.sh) to simplify execution of the DeepPrep Docker container on FABRIC.
 
 ## 📦 Dataset Strategy (ds005237)
+
+The dataset is https://openneuro.org/datasets/ds005237/versions/1.0.3 from OpenNeuro.  
 
 The full ds005237 dataset is large and will NOT be fully downloaded or processed on FABRIC due to compute and storage constraints.
 
