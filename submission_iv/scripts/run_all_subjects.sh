@@ -23,7 +23,7 @@
 SUBJECTS=(
   sub-NDARINVAG023WG3
   sub-NDARINVAG339WHH
-  sub-NDARINVXXXXXXXX
+  sub-NDARINVXXXXXXXX # placeholder subjects, edit before running
 )
 
 for SUB in "${SUBJECTS[@]}"

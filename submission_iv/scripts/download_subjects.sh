@@ -29,7 +29,7 @@ BASE_DIR=~/deepprep_project/data/ds005237
 SUBJECTS=(
 sub-NDARINVAG023WG3
 sub-NDARINVAG339WHH
-sub-NDARINVXXXXXXX
+sub-NDARINVXXXXXXX # placeholder subjects, edit before running
 )
 
 mkdir -p "$BASE_DIR"

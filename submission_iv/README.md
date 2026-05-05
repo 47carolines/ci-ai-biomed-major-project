@@ -192,7 +192,7 @@ This ensures no overlap and reproducible subject-level processing.
 
 ### 2.3.1 📦 Dataset Acquisition Strategy (ds005237)
 
-We use AWS CLI to populate ~/deepprep_project/data/ds005237/ with only the assigned subjects for each team member. This avoids downloading the full dataset.
+We use AWS CLI (via OpenNeuro S3 mirror when available) to populate ~/deepprep_project/data/ds005237/ with only the assigned subjects for each team member. This avoids downloading the full dataset.
 
 #### ⚙️ Step 1: Install AWS CLI (if not already installed)
 ```
