@@ -53,7 +53,7 @@ sudo apt upgrade -y
 
 ### 2.1.2 Install Docker (recommended method for FABRIC VM)
 
-Since the VM is Ubuntu 20.04, Docker can be installed directly from the Ubuntu package manager:
+Since the VM is Ubuntu 22, Docker can be installed directly from the Ubuntu package manager:
 `sudo apt install -y docker.io`
 
 ### 2.1.3 Start and enable Docker service
@@ -204,7 +204,7 @@ sudo apt install -y awscli
 Inside your project directory:
 ```
 cd ~/deepprep_project/scripts
-nano download_subjects.sh
+vi download_subjects.sh
 ```
 
 Paste the template found in this repository called `download_subjects.sh`. Update the `SUBJECTS` array to include your specific assigned subjects.
@@ -320,6 +320,45 @@ cd ~/deepprep_project/scripts
 ```
 You must pass a participant ID from ds005237 (e.g., sub-NDARINVAG023WG3).
 
+## 🔄 2.3.5.1 Running DeepPrep Asynchronously (tmux)
+
+DeepPrep jobs can take a long time to complete. To avoid interruption when closing your terminal or losing SSH connection, we use `tmux` to run jobs in a persistent session.
+
+### 📦 Install tmux (if not installed)
+```
+sudo apt install -y tmux
+```
+### ▶️ Start a tmux session
+```
+tmux new -s deepprep
+```
+You are now inside a persistent session.
+
+### ▶️ Run your pipeline
+```
+./run_deepprep.sh sub-NDARINVXXXX
+```
+
+### ⏹️ Detach from session (leave it running)
+
+Press:
+```
+Ctrl + B, then D
+```
+
+This safely exits the session while keeping the job running in the background.
+
+### 🔁 Reattach later
+```
+tmux attach -t deepprep
+```
+### 📌 Why this is important
+
+* Prevents job loss if SSH disconnects
+* Allows long-running jobs overnight
+* Enables “set and forget” execution
+
+
 ## ⚙️ 2.3.6 What the Script Does
 
 The run_deepprep.sh script:
@@ -338,6 +377,37 @@ The run_deepprep.sh script:
 ~/deepprep_project/output/
 ```
 This pipeline processes selected participants from ds005237 (OpenNeuro Transdiagnostic Connectome Project). Only specified subjects are processed to reduce compute cost and allow multi-person analysis across teammates.
+
+## 🔁 2.3.6.1 Running Multiple Subjects Automatically
+
+Instead of manually running DeepPrep for each subject, we provide a batch script to process multiple participants sequentially.
+
+### 📁 Create batch script
+```
+vi ~/deepprep_project/scripts/run_all_subjects.sh
+```
+Copy from the existing `run_all_subjects.sh` in this repo folder.
+
+### ▶️ Make executable
+```
+chmod +x ~/deepprep_project/scripts/run_all_subjects.sh
+```
+### ▶️ Run batch processing
+```
+./run_all_subjects.sh
+```
+### 📌 Behavior
+
+* Runs subjects one at a time
+* Automatically proceeds to next subject after completion
+* Ideal when using a single FABRIC node
+
+### ⚠️ Important
+
+Do NOT run multiple DeepPrep jobs simultaneously on the same node unless you have sufficient CPU/RAM — this can cause crashes.
+
+For parallel processing, use multiple FABRIC nodes instead.
+
 ## 📌 2.3.7 Expected Output
 
 If successful, DeepPrep will generate:
@@ -438,3 +508,49 @@ For documentation purposes, the following may also be included:
 - Screenshot of `tree ~/deepprep_project/output`
 - Screenshot of successful completion log
 - QC report HTML opened in browser
+
+## 📤 2.3.9 Exporting and Combining Processed Data
+
+After preprocessing, each team member must export their results so the full dataset can be combined for analysis.
+
+### 🎯 Goal
+
+Each team member processes 3 subjects → combine into 9-subject dataset for analysis (e.g., Google Colab notebooks).
+
+---
+
+## 🖥️ Option 1 (Recommended): Download + Shared Drive
+
+### Step 1: Compress output
+```
+cd ~/deepprep_project/
+tar -czvf output.tar.gz output/
+```
+
+### Step 2: Copy to local machine
+Run this from your **local computer terminal**:
+```
+scp -i <path_to_key> ubuntu@<fabric_ip>:~/deepprep_project/output.tar.gz .
+```
+### Step 3: Upload to shared storage
+
+Upload to:
+* Google Drive (Shared Folder, CS_4001_Colabs/Final_Project/combined_outputs)
+
+### 🧠 Final Dataset Assembly
+
+One team member (or all members) should:
+
+1. Download all outputs
+2. Extract them:
+
+```
+tar -xzvf output.tar.gz
+```
+3. Combine into a single directory:
+```
+combined_outputs/
+├── sub-XXX/
+├── sub-YYY/
+├── sub-ZZZ/
+```
