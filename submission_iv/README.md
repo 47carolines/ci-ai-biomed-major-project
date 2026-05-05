@@ -1,4 +1,4 @@
-# Submission II – DeepPrep fMRI Preprocessing Pipeline
+# Final Project – DeepPrep fMRI Preprocessing Pipeline
 
 # Getting setup:
 ## Part 1: Creating and SSHing into FABRIC VM
@@ -11,7 +11,7 @@ Disclaimer: This documentation assumes you have a FABRIC account, you are in the
 
 Step 2: Add Nodes Section
 * Site: UTAH
-* Node Name: major-sub-ii
+* Node Name: firstname-node (example: Caroline-node)
 * Cores: 8
 * RAM (GB): 32
 * Disk (GB): 100
