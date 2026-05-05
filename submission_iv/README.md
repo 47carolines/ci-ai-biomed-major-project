@@ -326,6 +326,18 @@ You must pass a participant ID from ds005237 (e.g., sub-NDARINVAG023WG3).
 
 DeepPrep jobs can take a long time to complete. To avoid interruption when closing your terminal or losing SSH connection, we use `tmux` to run jobs in a persistent session.
 
+🧠 The core idea
+
+When you run something normally:
+```
+ssh → run command → close laptop → process dies 😭
+```
+With tmux:
+```
+ssh → start tmux session → run command → disconnect → process keeps running ✅
+```
+Because the process lives inside tmux, not inside your SSH connection.
+
 ### 📦 Install tmux (if not installed)
 ```
 sudo apt install -y tmux
@@ -349,17 +361,42 @@ Ctrl + B, then D
 ```
 
 This safely exits the session while keeping the job running in the background.
+Now:
 
-### 🔁 Reattach later
+* Your job is STILL running
+* You are no longer viewing it
+
+### 🔗 Attach = “come back later”
+
+You reconnect to your node and want to resume watching:
 ```
 tmux attach -t deepprep
 ```
+
+Now:
+
+* You’re back exactly where you left off
+* Same logs, same progress, same screen
+
 ### 📌 Why this is important
 
 * Prevents job loss if SSH disconnects
 * Allows long-running jobs overnight
 * Enables “set and forget” execution
 
+### 🔍 Helpful commands
+List sessions:
+```
+tmux ls
+```
+Attach to one:
+```
+tmux attach -t deepprep
+```
+Kill session (when done):
+```
+tmux kill-session -t deepprep
+```
 
 ## ⚙️ 2.3.6 What the Script Does
 
