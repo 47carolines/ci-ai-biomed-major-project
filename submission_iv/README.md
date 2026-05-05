@@ -206,6 +206,8 @@ Inside your project directory:
 cd ~/deepprep_project/scripts
 vi download_subjects.sh
 ```
+All of the scripts we plan to use are in this submission_iv folder in the scripts folder. This includes
+`download_subjects.sh`, `run_all_subjects.sh`, `run_deepprep.sh`.
 
 Paste the template found in this repository called `download_subjects.sh`. Update the `SUBJECTS` array to include your specific assigned subjects.
 
@@ -519,7 +521,7 @@ Each team member processes 3 subjects → combine into 9-subject dataset for ana
 
 ---
 
-## 🖥️ Option 1 (Recommended): Download + Shared Drive
+## 🖥️ Download processed output to local computer and upload to Shared Google Drive
 
 ### Step 1: Compress output
 ```
