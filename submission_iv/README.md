@@ -14,7 +14,7 @@ Step 2: Add Nodes Section
 * Node Name: firstname-node (example: Caroline-node)
 * Cores: 8
 * RAM (GB): 32
-* Disk (GB): 100
+* Disk (GB): 250
 * OS Image: Ubuntu 22 
 
 Click Add Node, you should see it pop up in the topology on the right hand side.
@@ -139,7 +139,7 @@ This project uses a wrapper script (run_deepprep.sh) to simplify execution of th
 
 ## 📦 Dataset Strategy (ds005237)
 
-The dataset is https://openneuro.org/datasets/ds005237/versions/1.0.3 from OpenNeuro.  
+The dataset is https://openneuro.org/datasets/ds005237/versions/1.0.3 from OpenNeuro. Alternatively you can view it on GitHub here: https://github.com/OpenNeuroDatasets/ds005237.git.
 
 The full ds005237 dataset is large and will NOT be fully downloaded or processed on FABRIC due to compute and storage constraints.
 
