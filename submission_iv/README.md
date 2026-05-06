@@ -349,27 +349,42 @@ Make sure:
 * it is not empty
 * it is readable:
 
-`chmod 644 ~/deepprep_project/license/license.txt`
-
+```
+chmod 644 ~/deepprep_project/license/license.txt`
+```
 
 ## 2.3.3 📁 VM Folder Setup
 
-After downloading the test dataset, organize your workspace on the VM as follows. You will have to copy `license.txt`, `run_deepprep.sh`, and `download_subjects.sh` from your local machine. Just type `vi license.txt` to create a new file called `license.txt` and paste in the content from the local copy. 
+After downloading the test dataset, organize your workspace on the VM as follows. For the 3 scripts, they exist here in the repo you just need to create blank files on the node and copy the contents from your local to node: 
+
+```
+mkdir ~/deepprep_project/output
+cd ~/deepprep_project/scripts
+vi run_deepprep.sh
+vi run_all_subjects.sh
+```
+Make sure your scripts are executable:
+```
+chmod +x ~/deepprep_project/scripts/run_deepprep.sh
+chmod +x ~/deepprep_project/scripts/run_all_subjects.sh
+```
+
 
 On the FABRIC VM, we maintain a clean BIDS-style project directory:
 ```
 ~/deepprep_project/
 ├── data/
 │   └── ds005237/
-│       ├── sub-<participant_id>/
-│       ├── dataset_description.json
-│       └── participants.tsv
+│       ├── sub-1XXXXX/
+│       ├── sub-2XXXXX/
+│       └── sub-3XXXXX/
 ├── output/
 ├── license/
 │   └── license.txt
 ├── scripts/
 │   ├── run_deepprep.sh
 │   └── download_subjects.sh
+|   └── run_all_subjects.sh
 ```
 
 ### 📌 Key design principles
@@ -386,11 +401,6 @@ tree ~/deepprep_project/
 ```
 
 ## ▶️ 2.3.5 Running DeepPrep
-
-Make sure your script is executable:
-```
-chmod +x ~/deepprep_project/scripts/run_deepprep.sh
-```
 
 Run the pipeline:
 ```
@@ -498,16 +508,6 @@ This pipeline processes selected participants from ds005237 (OpenNeuro Transdiag
 
 Instead of manually running DeepPrep for each subject, we provide a batch script to process multiple participants sequentially.
 
-### 📁 Create batch script
-```
-vi ~/deepprep_project/scripts/run_all_subjects.sh
-```
-Copy from the existing `run_all_subjects.sh` in this repo folder.
-
-### ▶️ Make executable
-```
-chmod +x ~/deepprep_project/scripts/run_all_subjects.sh
-```
 ### ▶️ Run batch processing
 ```
 ./run_all_subjects.sh
