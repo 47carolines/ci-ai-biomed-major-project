@@ -696,48 +696,4 @@ scp -F ~/.ssh/config.txt -i ~/.ssh/fabric-sliver-key \
 tar -xzvf qc_reports.tar.gz
 ```
 
-## 📤 2.3.9 Exporting and Combining Processed Data
-
-After preprocessing, each team member must export their results so the full dataset can be combined for analysis.
-
-### 🎯 Goal
-
-Each team member processes 3 subjects → combine into 9-subject dataset for analysis (e.g., Google Colab notebooks).
-
----
-
-## 🖥️ Download processed output to local computer and upload to Shared Google Drive
-
-### Step 1: Compress output
-```
-cd ~/deepprep_project/
-tar -czvf output.tar.gz output/
-```
-
-### Step 2: Copy to local machine
-Run this from your **local computer terminal**:
-```
-scp -i <path_to_key> ubuntu@<fabric_ip>:~/deepprep_project/output.tar.gz .
-```
-### Step 3: Upload to shared storage
-
-Upload to:
-* Google Drive (Shared Folder, CS_4001_Colabs/Final_Project/combined_outputs)
-
-### 🧠 Final Dataset Assembly
-
-One team member (or all members) should:
-
-1. Download all outputs
-2. Extract them:
-
-```
-tar -xzvf output.tar.gz
-```
-3. Combine into a single directory:
-```
-combined_outputs/
-├── sub-XXX/
-├── sub-YYY/
-├── sub-ZZZ/
-```
+## 📤 2.3.9 Exporting Processed Features
