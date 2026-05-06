@@ -1,47 +1,28 @@
 import os
-import pandas as pd
 import numpy as np
+import pandas as pd
+
+from nilearn import image
 
 DATA_DIR = "/home/ubuntu/deepprep_project/output"
 OUTPUT_PATH = "/home/ubuntu/deepprep_project/subject_features.csv"
 
 
 # ----------------------------
-# LOAD CONFOUNDS
+# FIND FILES
 # ----------------------------
-def load_confounds(subject_dir):
-    candidates = [
-        f for f in os.listdir(subject_dir)
-        if f.endswith("desc-confounds_timeseries.tsv")
-    ]
-
-    if not candidates:
-        raise FileNotFoundError("No confounds file found")
-
-    return pd.read_csv(os.path.join(subject_dir, candidates[0]), sep="\t")
+def find_confounds(func_dir):
+    for f in os.listdir(func_dir):
+        if f.endswith("desc-confounds_timeseries.tsv"):
+            return os.path.join(func_dir, f)
+    return None
 
 
-# ----------------------------
-# LOAD BOLD TIMESERIES
-# ----------------------------
-def load_bold_timeseries(subject_dir):
-    """
-    Tries to find a usable BOLD time series table.
-    Adjust if your DeepPrep output differs.
-    """
-    func_dir = subject_dir
-
-    candidates = []
-    for root, _, files in os.walk(func_dir):
-        for f in files:
-            if f.endswith(".tsv") and "confounds" not in f:
-                candidates.append(os.path.join(root, f))
-
-    if not candidates:
-        raise FileNotFoundError("No BOLD timeseries file found")
-
-    # pick first valid candidate
-    return pd.read_csv(candidates[0], sep="\t")
+def find_bold(func_dir):
+    for f in os.listdir(func_dir):
+        if "desc-preproc_bold.nii.gz" in f:
+            return os.path.join(func_dir, f)
+    return None
 
 
 # ----------------------------
@@ -52,6 +33,7 @@ def compute_confound_features(df):
 
     if "framewise_displacement" in df.columns:
         fd = df["framewise_displacement"].fillna(0)
+
         features["fd_mean"] = fd.mean()
         features["fd_max"] = fd.max()
         features["fd_std"] = fd.std()
@@ -65,49 +47,64 @@ def compute_confound_features(df):
 
 
 # ----------------------------
-# BOLD FEATURES (NEW - WALTS DIRECTION)
+# BOLD FEATURES (REAL SIGNAL)
 # ----------------------------
-def compute_bold_features(df):
-    """
-    Assumes df contains ROI time series columns OR numeric signal columns.
-    """
+def compute_bold_features(bold_img_path):
     features = {}
 
-    # keep only numeric columns (drop metadata)
-    ts = df.select_dtypes(include=[np.number]).to_numpy()
+    img = image.load_img(bold_img_path)
+    data = img.get_fdata()
 
-    if ts.size == 0:
+    # data shape: (x, y, z, time)
+    if len(data.shape) != 4:
         return features
 
-    # --------------------
+    # -----------------------
+    # Flatten brain voxels → time series
+    # -----------------------
+    ts = data.reshape(-1, data.shape[-1])  # voxels × time
+
+    # remove empty voxels
+    ts = ts[np.std(ts, axis=1) > 0]
+
+    if ts.shape[0] == 0:
+        return features
+
+    # -----------------------
     # Time-domain features
-    # --------------------
-    mean_signal = np.mean(ts)
-    std_signal = np.std(ts)
+    # -----------------------
+    voxel_mean = np.mean(ts)
+    voxel_std = np.std(ts)
 
-    features["bold_mean_amp"] = mean_signal
-    features["bold_std_amp"] = std_signal
+    features["bold_mean_signal"] = voxel_mean
+    features["bold_std_signal"] = voxel_std
 
-    # --------------------
-    # Frequency-domain features (FFT)
-    # --------------------
-    fft_vals = np.fft.rfft(ts, axis=1 if ts.ndim > 1 else 0)
+    # variance across time per voxel
+    voxel_var = np.var(ts, axis=1)
+    features["bold_mean_voxel_variance"] = np.mean(voxel_var)
+
+    # -----------------------
+    # Temporal signal (global mean signal)
+    # -----------------------
+    global_ts = np.mean(ts, axis=0)
+
+    features["bold_global_mean"] = np.mean(global_ts)
+    features["bold_global_std"] = np.std(global_ts)
+
+    # -----------------------
+    # Spectral features (FFT)
+    # -----------------------
+    fft_vals = np.fft.rfft(global_ts)
     power = np.abs(fft_vals) ** 2
 
-    total_power = np.sum(power)
-    features["spectral_total_power"] = total_power
-
-    # low-frequency proxy (first ~10 bins)
-    if power.ndim == 2:
-        features["spectral_low_freq_power"] = np.sum(power[:, :10])
-    else:
-        features["spectral_low_freq_power"] = np.sum(power[:10])
+    features["spectral_total_power"] = np.sum(power)
+    features["spectral_low_freq_power"] = np.sum(power[:10])
 
     return features
 
 
 # ----------------------------
-# MAIN LOOP
+# MAIN PIPELINE
 # ----------------------------
 rows = []
 
@@ -116,19 +113,31 @@ for sub in os.listdir(DATA_DIR):
         continue
 
     try:
-        subject_dir = os.path.join(DATA_DIR, sub)
+        subject_dir = os.path.join(DATA_DIR, sub, "BOLD", sub, "func")
 
+        # -----------------------
         # confounds
-        confound_path = os.path.join(subject_dir, "BOLD", sub, "func")
-        confounds_df = load_confounds(confound_path)
-        confound_feats = compute_confound_features(confounds_df)
+        # -----------------------
+        conf_path = find_confounds(subject_dir)
+        if conf_path is None:
+            raise FileNotFoundError("confounds missing")
 
-        # BOLD features
-        bold_df = load_bold_timeseries(confound_path)
-        bold_feats = compute_bold_features(bold_df)
+        conf_df = pd.read_csv(conf_path, sep="\t")
+        conf_feats = compute_confound_features(conf_df)
 
+        # -----------------------
+        # BOLD
+        # -----------------------
+        bold_path = find_bold(subject_dir)
+        if bold_path is None:
+            raise FileNotFoundError("BOLD NIfTI missing")
+
+        bold_feats = compute_bold_features(bold_path)
+
+        # -----------------------
         # merge
-        feats = {**confound_feats, **bold_feats}
+        # -----------------------
+        feats = {**conf_feats, **bold_feats}
         feats["subject"] = sub
 
         rows.append(feats)
@@ -140,7 +149,7 @@ for sub in os.listdir(DATA_DIR):
 
 
 # ----------------------------
-# SAVE CSV
+# SAVE
 # ----------------------------
 pd.DataFrame(rows).to_csv(OUTPUT_PATH, index=False)
 print("Saved:", OUTPUT_PATH)
