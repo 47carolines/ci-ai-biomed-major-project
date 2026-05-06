@@ -91,7 +91,7 @@ docker run --rm \
   --device "$DEVICE_FLAG" \
   --cpus "$CPUS" \
   --memory "$MEMORY" \
-  --bold_task_type rest \
+  --bold_task_type restAP restPA \
   --bold_sdc \
   --bold_confounds \
   --bold_volume_space MNI152NLin2009cAsym \
