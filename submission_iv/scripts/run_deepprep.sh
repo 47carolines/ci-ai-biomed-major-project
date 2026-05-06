@@ -25,7 +25,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
 
 DATA_DIR="$PROJECT_ROOT/data/ds005237"
-OUTPUT_DIR="$PROJECT_ROOT/output"
+OUTPUT_DIR="$PROJECT_ROOT/output/$PARTICIPANT"
 LICENSE_FILE="$PROJECT_ROOT/license/license.txt"
 
 echo "======================================"
