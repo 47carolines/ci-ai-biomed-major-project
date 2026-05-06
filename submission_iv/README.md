@@ -253,6 +253,71 @@ Each team member is responsible for:
 
 This ensures no overlap and reproducible subject-level processing.
 
+## 2.3.0 📁 VM Folder Setup
+
+## 🖥️ Project Setup on FABRIC VM
+
+We use Git to ensure reproducibility across team members.
+
+### Clone repository
+
+```bash
+git clone https://github.com/47carolines/ci-ai-biomed-major-project.git
+cd ci-ai-biomed-major-project/submission_iv
+```
+### Create working directory on VM
+```
+mkdir -p ~/deepprep_project/{data/ds005237,output,license,scripts}
+```
+
+### 📂 Copy only required scripts into working directory
+
+This avoids pulling in unrelated repo content.
+```
+cp scripts/*.sh ~/deepprep_project/scripts/
+cp scripts/extract_features.py ~/deepprep_project/scripts/
+chmod +x ~/deepprep_project/scripts/*.sh
+```
+Then you can optionally delete the repo clone to save space:
+```
+cd ~
+rm -rf ci-ai-biomed-major-project
+ls
+```
+
+On the FABRIC VM, we maintain a clean BIDS-style project directory:
+```
+~/deepprep_project/
+├── data/
+│   └── ds005237/
+│       ├── sub-1XXXXX/
+│       ├── sub-2XXXXX/
+│       ├── sub-3XXXXX/
+|       └── dataset_description.json
+├── output/
+├── license/
+│   └── license.txt
+├── scripts/
+│   ├── run_deepprep.sh
+│   ├── download_subjects.sh
+|   ├── run_all_subjects.sh
+|   ├── cleanup.sh
+|   └── extract_features.py
+```
+
+### 📌 Key design principles
+
+* data/ → only raw BIDS inputs (ds005237 subset)
+* output/ → all DeepPrep derivatives
+* license/ → FreeSurfer license only
+* scripts/ → all reproducible automation (no manual commands)
+
+Verify setup with tree:
+```
+sudo apt install tree
+tree ~/deepprep_project/
+```
+
 ### 2.3.1 📦 Dataset Acquisition Strategy (ds005237)
 
 We use AWS CLI (via OpenNeuro S3 mirror when available) to populate ~/deepprep_project/data/ds005237/ with only the assigned subjects for each team member. This avoids downloading the full dataset.
@@ -314,7 +379,6 @@ If you do not already have one, you can obtain it for free by registering here:
 After downloading, copy your license file into the project directory:
 
 ```
-mkdir -p ~/deepprep_project/license
 cd ~/deepprep_project/license
 vi license.txt
 ```
@@ -351,58 +415,6 @@ Make sure:
 
 ```
 chmod 644 ~/deepprep_project/license/license.txt`
-```
-
-## 2.3.3 📁 VM Folder Setup
-
-After downloading the test dataset, organize your workspace on the VM as follows. For the 3 scripts, they exist here in the repo you just need to create blank files on the node and copy the contents from your local to node: 
-
-```
-mkdir ~/deepprep_project/output
-cd ~/deepprep_project/scripts
-vi run_deepprep.sh
-vi run_all_subjects.sh
-vi cleanup.sh
-```
-Make sure your scripts are executable:
-```
-chmod +x ~/deepprep_project/scripts/run_deepprep.sh
-chmod +x ~/deepprep_project/scripts/run_all_subjects.sh
-chmod +x ~/deepprep_project/scripts/cleanup.sh
-```
-
-
-On the FABRIC VM, we maintain a clean BIDS-style project directory:
-```
-~/deepprep_project/
-├── data/
-│   └── ds005237/
-│       ├── sub-1XXXXX/
-│       ├── sub-2XXXXX/
-│       ├── sub-3XXXXX/
-|       └── dataset_description.json
-├── output/
-├── license/
-│   └── license.txt
-├── scripts/
-│   ├── run_deepprep.sh
-│   ├── download_subjects.sh
-|   ├── run_all_subjects.sh
-|   └── cleanup.sh
-
-```
-
-### 📌 Key design principles
-
-* data/ → only raw BIDS inputs (ds005237 subset)
-* output/ → all DeepPrep derivatives
-* license/ → FreeSurfer license only
-* scripts/ → all reproducible automation (no manual commands)
-
-Verify setup with tree:
-```
-sudo apt install tree
-tree ~/deepprep_project/
 ```
 
 ## ▶️ 2.3.5 Running DeepPrep
@@ -697,3 +709,28 @@ tar -xzvf qc_reports.tar.gz
 ```
 
 ## 📤 2.3.9 Exporting Processed Features
+
+So we need to extract features to a CSV from the processed data that we can run Python Notebooks on to analyze. WE are going to use a Python script to do this and then use SCP to transfer the CSV to our local machine. Then we will upload the CSV to the Google Drive Shared Folder (CS_4001_Colabs/Final_Project/combined_outputs)
+
+### Install Miniconda:
+We need to install Miniconda so we can have Conda to manage our packages and environment. Download miniconda:
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+```
+Once downloaded, Install miniconda with this command:
+```
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+make sure to review and accept the license agreement. Just install in the default location and proceed with initialization. In order to get changes to take effect, type `exit` to exit the shell and then re-ssh in by entering the SSH command.
+
+You can remove the installation script once installed
+```
+rm Miniconda3-latest-Linux-x86_64.sh
+```
+
+### Create fmri_project environment:
+You may be asked to accept the Terms of Service, just say accept and install new packages.
+```
+conda create --name fmri_project python=3.10
+conda activate fmri_project
+```
