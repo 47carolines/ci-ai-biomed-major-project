@@ -1,6 +1,16 @@
 # Final Project – DeepPrep fMRI Preprocessing Pipeline (Submission IV)
 
 # Getting setup:
+## Part 0: Following along with this README.md
+
+I would recommend cloning this repository to your local computer to follow along.
+
+Tools used:
+- GitHub Desktop
+- Visual Studio Code
+
+I recommend downloading both of these tools to your computer if you don't already have them. You can clone this repository down to your local computer using GitHub Destkop and then you should be able to open it in Visual Studio Code.
+
 ## Part 1: Creating and SSHing into FABRIC VM
 
 Disclaimer: This documentation assumes you have a FABRIC account, you are in the CI4Neuroscience Project, and you have set up a sliver and bastion keys for your account and that you have them locally on your computer. If not, please watch and follow along Ajay's FABRIC setup video from Week 3 on Canvas.
@@ -50,11 +60,14 @@ After successfully SSHing into the FABRIC VM, the next step is to install Docker
 sudo apt update
 sudo apt upgrade -y
 ```
+If it gives you any prompts during the upgrade just press the Enter key until they go away it should finish successfully.
 
 ### 2.1.2 Install Docker (recommended method for FABRIC VM)
 
 Since the VM is Ubuntu 22, Docker can be installed directly from the Ubuntu package manager:
-`sudo apt install -y docker.io`
+```
+sudo apt install -y docker.io
+```
 
 ### 2.1.3 Start and enable Docker service
 ```
@@ -65,14 +78,49 @@ sudo systemctl enable docker
 ### 2.1.4 Verify Docker installation
 
 Run the following command to confirm Docker is working correctly:
-`docker run hello-world`
+```
+docker run hello-world
+```
+
+You should see something like this on success:
+```
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+4f55086f7dd0: Pull complete
+d5e71e642bf5: Download complete
+Digest: sha256:f9078146db2e05e794366b1bfe584a14ea6317f44027d10ef7dad65279026885
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+```
 
 
 ### 2.1.5 Fixing Docker Permission Denied Error
 
 After installing Docker, you may encounter the following error when running a Docker command:
 
-`permission denied while trying to connect to the Docker daemon socket`
+```
+permission denied while trying to connect to the Docker daemon socket
+```
 
 This occurs because the current user does not have permission to access the Docker daemon.
 
@@ -80,23 +128,26 @@ This occurs because the current user does not have permission to access the Dock
 
 Use sudo to run Docker commands:
 
-`sudo docker run hello-world`
+```
+sudo docker run hello-world
+```
 
 This allows Docker to run without changing system permissions.
 
 ### Permanent fix (recommended setup)
 
 To allow Docker to run without sudo, add your user to the Docker group:
-
-`sudo usermod -aG docker $USER`
-
+```
+sudo usermod -aG docker $USER
+```
 Apply the group changes immediately:
-
-`newgrp docker`
-
+```
+newgrp docker
+```
 Then verify Docker works without sudo:
-
-`docker run hello-world`
+```
+docker run hello-world
+```
 
 ## 2.2 Pulling and Testing the DeepPrep Docker Image
 
@@ -108,28 +159,35 @@ After Docker has been installed and verified on the VM, the next step is to down
 
 Run the following command to download the DeepPrep image from DockerHub:
 
-`docker pull pbfslab/deepprep:25.1.0`
+```
+docker pull pbfslab/deepprep:25.1.0
+```
+
+The DeepPrep image can take up to 4 minutes to pull down since it is big.
 
 ### 2.2.2 Run the Docker image (test execution)
 To verify that the container is functioning correctly, run:
-`docker run --rm pbfslab/deepprep:25.1.0`
+```
+docker run --rm pbfslab/deepprep:25.1.0
+```
 
 ### 2.2.3 Expected output
 
-If the image was successfully pulled and executed, the terminal should display usage information similar to the following:
+If the image was successfully pulled and executed, the terminal should display usage information similar to the following. It may take up to 30 seconds to show this. You can press Ctrl + C multiple times to kill it once you see that it is working.
 ```
+ubuntu@caroline-node:~$ docker run --rm pbfslab/deepprep:25.1.0
 INFO: args:
-DeepPrep args:
-deepprep-docker [bids_dir] [output_dir] [{participant}] [--bold_task_type '[task1 task2 task3 ...]']
-                [--fs_license_file PATH] [--participant_label '[001 002 003 ...]']
-                [--subjects_dir PATH] [--skip_bids_validation]
-                [--anat_only] [--bold_only] [--bold_sdc] [--bold_confounds] [--bold_skip_frame 0]
-                [--bold_cifti] [--bold_surface_spaces '[None fsnative fsaverage fsaverage6 ...]']
-                [--bold_volume_space {None MNI152NLin6Asym MNI152NLin2009cAsym}]
-                [--bold_volume_res {02 03...}]
-                [--device {auto 0 1 2... cpu}]
-                [--cpus 10] [--memory 20]
-                [--ignore_error] [--resume]
+2026-05-06 01:21:42.189 Did not auto detect external IP.
+Please go to https://docs.streamlit.io/ for debugging hints.
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.17.0.3:8501
+
+^C^C^C
+got 3 SIGTERM/SIGINTs, forcefully exiting
+ubuntu@caroline-node:~$
 ```                
 ## 2.3 Running DeepPrep on the FABRIC VM
 
@@ -196,13 +254,13 @@ We use AWS CLI (via OpenNeuro S3 mirror when available) to populate ~/deepprep_p
 
 #### ⚙️ Step 1: Install AWS CLI (if not already installed)
 ```
-sudo apt update
 sudo apt install -y awscli
 ```
 #### 📁 Step 2: Create download script on the VM
 
 Inside your project directory:
 ```
+mkdir -p ~/deepprep_project/scripts
 cd ~/deepprep_project/scripts
 vi download_subjects.sh
 ```
