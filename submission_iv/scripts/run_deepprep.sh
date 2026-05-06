@@ -50,11 +50,6 @@ if [ ! -d "$DATA_DIR/$PARTICIPANT" ]; then
   exit 1
 fi
 
-if [ ! -f "$DATA_DIR/dataset_description.json" ]; then
-  echo "ERROR: Missing dataset_description.json (invalid BIDS dataset)"
-  exit 1
-fi
-
 if [ ! -f "$LICENSE_FILE" ]; then
   echo "ERROR: FreeSurfer license not found at $LICENSE_FILE"
   exit 1

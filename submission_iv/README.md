@@ -440,6 +440,12 @@ You are now inside a persistent session.
 ./run_deepprep.sh sub-NDARINVXXXX
 ```
 
+or 
+```
+./run_all_subjects.sh
+```
+
+From within the scripts folder.
 ### ⏹️ Detach from session (leave it running)
 
 Press:
