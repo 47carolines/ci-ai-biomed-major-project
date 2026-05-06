@@ -14,7 +14,7 @@ Step 2: Add Nodes Section
 * Node Name: firstname-node (example: Caroline-node)
 * Cores: 8
 * RAM (GB): 32
-* Disk (GB): 250
+* Disk (GB): 500
 * OS Image: Ubuntu 22 
 
 Click Add Node, you should see it pop up in the topology on the right hand side.
