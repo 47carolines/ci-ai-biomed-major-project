@@ -269,6 +269,7 @@ cd ci-ai-biomed-major-project/submission_iv
 ```
 mkdir -p ~/deepprep_project/{data/ds005237,output,license,scripts}
 ```
+All DeepPrep execution occurs in ~/deepprep_project/, not in the cloned repository. We just clone the repo to easily access the scripts.
 
 ### 📂 Copy only required scripts into working directory
 
@@ -317,6 +318,7 @@ Verify setup with tree:
 sudo apt install tree
 tree ~/deepprep_project/
 ```
+You will add the subjects data and the license in the next couple steps.
 
 ### 2.3.1 📦 Dataset Acquisition Strategy (ds005237)
 
@@ -330,7 +332,6 @@ sudo apt install -y awscli
 
 Inside your project directory:
 ```
-mkdir -p ~/deepprep_project/scripts
 cd ~/deepprep_project/scripts
 vi download_subjects.sh
 ```
@@ -342,14 +343,9 @@ How to use vi: https://www.redhat.com/en/blog/introduction-vi-editor
 How to use Nano: https://linuxize.com/post/how-to-use-nano-text-editor/
 
 All of the scripts we plan to use are in this submission_iv folder in the scripts folder. This includes
-`download_subjects.sh`, `run_all_subjects.sh`, `run_deepprep.sh`.
+`download_subjects.sh`, `run_all_subjects.sh`, `run_deepprep.sh`, etc.
 
-Paste the template found in this repository called `download_subjects.sh`. Update the `SUBJECTS` array to include your specific assigned subjects.
-
-#### ▶️ Step 3: Make it executable
-```
-chmod +x download_subjects.sh
-```
+Using vi Update the `SUBJECTS` array in `download_subjects.sh` to include your specific assigned subjects. There is a comment in there listing them as well you could copy from there.
 
 #### ▶️ Step 4: Run download
 ```
@@ -733,4 +729,22 @@ You may be asked to accept the Terms of Service, just say accept and install new
 ```
 conda create --name fmri_project python=3.10
 conda activate fmri_project
+```
+
+Install required packages:
+```
+pip install numpy pandas scipy
+```
+
+### ▶️ Run Feature Extraction Script
+
+After installing dependencies, run the feature extraction pipeline on the processed DeepPrep outputs.
+
+Make sure you are inside the project directory on the FABRIC VM:
+```
+cd ~/deepprep_project/scripts
+```
+Run the script using Python:
+```
+python extract_features.py
 ```
