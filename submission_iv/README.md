@@ -734,7 +734,7 @@ conda activate fmri_project
 
 Install required packages:
 ```
-pip install numpy pandas scipy
+pip install numpy pandas scipy nilearn
 ```
 
 ### ▶️ Run Feature Extraction Script
