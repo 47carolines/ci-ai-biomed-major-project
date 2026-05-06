@@ -269,16 +269,34 @@ mkdir -p ~/deepprep_project/scripts
 cd ~/deepprep_project/scripts
 vi download_subjects.sh
 ```
+
+Ubuntu offers a variety of terminal-based text editors ranging from beginner-friendly tools to highly complex, extensible environments. GNU Nano and Vim are usually pre-installed and are the most common choices for command-line editing. This documentation uses `vi` mostly but you can use `nano` if you want too.
+
+How to use vi: https://www.redhat.com/en/blog/introduction-vi-editor
+
+How to use Nano: https://linuxize.com/post/how-to-use-nano-text-editor/
+
 All of the scripts we plan to use are in this submission_iv folder in the scripts folder. This includes
 `download_subjects.sh`, `run_all_subjects.sh`, `run_deepprep.sh`.
 
 Paste the template found in this repository called `download_subjects.sh`. Update the `SUBJECTS` array to include your specific assigned subjects.
 
 #### ▶️ Step 3: Make it executable
-`chmod +x download_subjects.sh`
+```
+chmod +x download_subjects.sh
+```
 
 #### ▶️ Step 4: Run download
-`./download_subjects.sh`
+```
+./download_subjects.sh
+```
+
+To download 3 subjects it could take up to 3 minutes or so. To verify the subjects were downloaded successfully you can navigate to the data folder and list out the contents
+```
+cd ~/deepprep_project/data/ds005237/
+ls
+```
+and you should see the 3 subjects listed there.
 
 ## 2.3.2 Requirements (license + assumptions)
 
@@ -297,13 +315,10 @@ After downloading, copy your license file into the project directory:
 
 ```
 mkdir -p ~/deepprep_project/license
-cp ~/freesurfer/license.txt ~/deepprep_project/license/
+cd ~/deepprep_project/license
+vi license.txt
 ```
-
-Your file should now be located at:
-
-```~/deepprep_project/license/license.txt```
-
+Copy the license.txt content from your local computer into this empty license.txt file you created.
 
 ### 🧠 Why this is required
 
@@ -314,7 +329,6 @@ DeepPrep uses FreeSurfer internally for:
 * segmentation steps
 
 Without a valid license, the pipeline will fail during preprocessing.
-
 
 ### 📌 How it is used in Docker
 
