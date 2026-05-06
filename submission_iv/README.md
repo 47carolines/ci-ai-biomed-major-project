@@ -642,6 +642,60 @@ For documentation purposes, the following may also be included:
 - Screenshot of successful completion log
 - QC report HTML opened in browser
 
+### 💻 Downloading QC Reports to Local Machine (Recommended First Step)
+
+Before transferring large output files, it is strongly recommended to download only the QC reports to quickly verify that preprocessing completed successfully for each subject.
+
+Each subject contains its own QC report located at:
+```
+~/deepprep_project/output/sub-<SUBJECT_ID>/QC/report.html
+```
+
+### 📥 Step-by-step: Extract and download QC reports only
+
+1. Navigate to output directory
+```
+cd ~/deepprep_project/output
+```
+2. Create a folder to store QC reports
+```
+mkdir qc_reports
+```
+3. Copy and rename QC reports (prevents overwriting). Make sure you update this step to match your subjects.
+```
+cp sub-NDARINVAG339WHH/QC/report.html qc_reports/report_AG339WHH.html
+cp sub-NDARINVZX212UNE/QC/report.html qc_reports/report_ZX212UNE.html
+cp sub-NDARINVAG023WG3/QC/report.html qc_reports/report_AG023WG3.html
+ls qc_reports
+```
+4. Compress QC reports (small and fast)
+```
+tar -czvf qc_reports.tar.gz qc_reports/
+```
+5. Download to local machine
+   
+Run from your local terminal:
+```
+scp -F ~/.ssh/config.txt -i ~/.ssh/fabric-sliver-key \
+-J <fabric_username>@bastion.fabric-testbed.net \
+"ubuntu@[<fabric_ip>]:~/deepprep_project/output/qc_reports.tar.gz" .
+```
+🔧 Replace:
+
+* <fabric_username> → your Fabric username (e.g., cslgbt_0000451422)
+* <fabric_ip> → your node’s IPv6 address (e.g., 2001:1948:417:7:f816:3eff:fe41:31e3)
+
+💡 Notes
+
+* Quotes (" ") are required to prevent shell issues with IPv6 brackets
+* -J ensures the connection routes through the Fabric bastion
+* -F ~/.ssh/config.txt uses your preconfigured SSH settings
+
+1. Extract and open locally
+```
+tar -xzvf qc_reports.tar.gz
+```
+
 ## 📤 2.3.9 Exporting and Combining Processed Data
 
 After preprocessing, each team member must export their results so the full dataset can be combined for analysis.
