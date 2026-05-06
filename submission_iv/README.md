@@ -3,13 +3,18 @@
 # Getting setup:
 ## Part 0: Following along with this README.md
 
-I would recommend cloning this repository to your local computer to follow along.
+I would recommend cloning this repository to your local computer to follow along  and access the relevant scripts easily.
 
 Tools used:
-- GitHub Desktop
-- Visual Studio Code
+- GitHub Desktop - Download link: https://desktop.github.com/download/
+- Visual Studio Code - Download link: https://code.visualstudio.com/download
 
-I recommend downloading both of these tools to your computer if you don't already have them. You can clone this repository down to your local computer using GitHub Destkop and then you should be able to open it in Visual Studio Code.
+
+I recommend downloading both of these tools to your computer if you don't already have them. You can clone this repository down to your local computer using GitHub Desktop and then you should be able to open it in Visual Studio Code.
+
+**How to clone a repository from GitHub to GitHub Desktop:**
+https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-a-repository-from-github-to-github-desktop
+
 
 ## Part 1: Creating and SSHing into FABRIC VM
 
