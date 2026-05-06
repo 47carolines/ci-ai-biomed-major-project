@@ -34,11 +34,32 @@ sub-NDARINVXXXXXXX # placeholder subjects, edit before running
 
 mkdir -p "$BASE_DIR"
 
+# --------------------------
+# 1. DOWNLOAD SUBJECTS
+# --------------------------
+
 for sub in "${SUBJECTS[@]}"; do
   echo "Downloading $sub ..."
   aws s3 cp --no-sign-request --recursive \
     s3://openneuro.org/ds005237/$sub \
     "$BASE_DIR/$sub"
 done
+
+# --------------------------
+# 2. DOWNLOAD DATASET METADATA (IMPORTANT FOR DEEPPREP)
+# --------------------------
+
+echo "Downloading dataset_description.json ..."
+
+aws s3 cp --no-sign-request \
+  s3://openneuro.org/ds005237/dataset_description.json \
+  "$BASE_DIR/dataset_description.json"
+
+# --------------------------
+# 3. FINAL CHECK
+# --------------------------
+
+echo "Verifying dataset structure:"
+ls "$BASE_DIR"
 
 echo "Download complete."

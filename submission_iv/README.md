@@ -291,12 +291,12 @@ chmod +x download_subjects.sh
 ./download_subjects.sh
 ```
 
-To download 3 subjects it could take up to 3 minutes or so. To verify the subjects were downloaded successfully you can navigate to the data folder and list out the contents
+To download 3 subjects it could take up to 3 minutes or so. You should see the 3 subjects downloaded as well as a `dataset_description.json`.
 ```
-cd ~/deepprep_project/data/ds005237/
-ls
+Verifying dataset structure:
+dataset_description.json  sub-NDARINVAG023WG3  sub-NDARINVAG339WHH  sub-NDARINVZX212UNE
+Download complete.
 ```
-and you should see the 3 subjects listed there.
 
 ## 2.3.2 Requirements (license + assumptions)
 
@@ -362,11 +362,13 @@ mkdir ~/deepprep_project/output
 cd ~/deepprep_project/scripts
 vi run_deepprep.sh
 vi run_all_subjects.sh
+vi cleanup.sh
 ```
 Make sure your scripts are executable:
 ```
 chmod +x ~/deepprep_project/scripts/run_deepprep.sh
 chmod +x ~/deepprep_project/scripts/run_all_subjects.sh
+chmod +x ~/deepprep_project/scripts/cleanup.sh
 ```
 
 
@@ -377,14 +379,17 @@ On the FABRIC VM, we maintain a clean BIDS-style project directory:
 │   └── ds005237/
 │       ├── sub-1XXXXX/
 │       ├── sub-2XXXXX/
-│       └── sub-3XXXXX/
+│       ├── sub-3XXXXX/
+|       └── dataset_description.json
 ├── output/
 ├── license/
 │   └── license.txt
 ├── scripts/
 │   ├── run_deepprep.sh
-│   └── download_subjects.sh
-|   └── run_all_subjects.sh
+│   ├── download_subjects.sh
+|   ├── run_all_subjects.sh
+|   └── cleanup.sh
+
 ```
 
 ### 📌 Key design principles
@@ -544,6 +549,12 @@ Output will be stored in:
 ```
 ~/deepprep_project/output/
 ```
+
+If anything goes wrong during the DeepPrep execution, you can run
+```
+./cleanup.sh
+```
+To reset the output folder so it is easy to rerun DeepPrep.
 
 ## ⏱️ Runtime Considerations
 
