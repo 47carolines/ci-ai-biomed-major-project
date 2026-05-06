@@ -692,6 +692,7 @@ scp -F ~/.ssh/config.txt -i ~/.ssh/fabric-sliver-key \
 
 * <fabric_username> → your Fabric username (e.g., cslgbt_0000451422)
 * <fabric_ip> → your node’s IPv6 address (e.g., 2001:1948:417:7:f816:3eff:fe41:31e3)
+* Wherever your `config.txt` and `fabric-sliver-key` are located
 
 💡 Notes
 
@@ -704,7 +705,7 @@ scp -F ~/.ssh/config.txt -i ~/.ssh/fabric-sliver-key \
 tar -xzvf qc_reports.tar.gz
 ```
 
-## 📤 2.3.9 Exporting Processed Features
+## 📤 2.3.9 Extracting Processed Features
 
 So we need to extract features to a CSV from the processed data that we can run Python Notebooks on to analyze. WE are going to use a Python script to do this and then use SCP to transfer the CSV to our local machine. Then we will upload the CSV to the Google Drive Shared Folder (CS_4001_Colabs/Final_Project/combined_outputs)
 
@@ -747,4 +748,114 @@ cd ~/deepprep_project/scripts
 Run the script using Python:
 ```
 python extract_features.py
+```
+Should look like this
+```
+(fmri_project) ubuntu@caroline-node:~/deepprep_project/scripts$ python extract_features.py
+Processed sub-NDARINVAG339WHH
+Processed sub-NDARINVZX212UNE
+Processed sub-NDARINVAG023WG3
+Saved: /home/ubuntu/deepprep_project/subject_features.csv
+```
+## 📤 2.3.10 Transfer Extracted Features to Local Machine
+
+After running feature extraction, the output file is:
+```
+~/deepprep_project/subject_features.csv
+```
+This file contains the final subject-level feature matrix used for downstream analysis.
+
+### Step 0 - Before transferring the file off the VM, rename it to match your team naming convention:
+```
+mv subject_features.csv caroline_subject_features.csv
+```
+
+Have the file include your first name so `scott_subject_features.csv`, `noor_subject_features.csv`.
+
+### 📥 Step 1 — Exit feature directory (VM side)
+
+Make sure you’re in a safe location:
+```
+cd ~
+```
+
+### 📦 Step 2 — SCP transfer to local machine
+
+Run this from your LOCAL terminal (not the VM):
+```
+scp -F ~/.ssh/config.txt -i ~/.ssh/fabric-sliver-key \
+-J <fabric_username>@bastion.fabric-testbed.net \
+"ubuntu@[<fabric_ip>]:~/deepprep_project/caroline_subject_features.csv" .
+```
+
+🔧 Replace:
+
+* <fabric_username> → your Fabric username (e.g., cslgbt_0000451422)
+* <fabric_ip> → your node’s IPv6 address (e.g., 2001:1948:417:7:f816:3eff:fe41:31e3)
+* Wherever your `config.txt` and `fabric-sliver-key` are located
+
+### 📁 Step 3 — Verify download locally
+
+On your local machine:
+```
+ls -lh caroline_subject_features.csv
+```
+
+### 📊 Step 4 — (optional but recommended) open quickly
+
+You can sanity check:
+```
+head caroline_subject_features.csv
+```
+You should see columns like:
+
+* subject
+* fd_mean
+* fd_max
+* fd_std
+* fd_spikes
+* dvars_mean (if present)
+
+### ☁️ Step 5 — Upload to Google Drive
+
+Upload caroline_subject_features.csv to the Shared Google Drive Folder
+```
+CS_4001_Colabs/Final_Project/combined_outputs
+```
+### 🔗 Step 6 — Combining Team Feature Files (Final Dataset Creation)
+
+After each team member uploads their individual feature file to Google Drive, we will combine them into a single dataset for downstream analysis.
+
+Each file will follow this naming convention:
+
+* caroline_subject_features.csv
+* noor_subject_features.csv
+* scott_subject_features.csv
+
+All files will be stored in:
+```
+CS_4001_Colabs/Final_Project/combined_outputs
+```
+🧠 Why we separate first, then combine
+
+This design ensures:
+
+* ✔ Each subject is processed independently (parallelizable)
+* ✔ Debugging is isolated per user
+* ✔ No accidental overwrite conflicts on FABRIC
+* ✔ Reproducibility across different compute nodes
+
+### 📊 Final merging step (Python in Google Colab or local machine)
+
+Once all files are uploaded, we will combine them using pandas:
+```
+import pandas as pd
+
+caroline = pd.read_csv("caroline_subject_features.csv")
+noor = pd.read_csv("noor_subject_features.csv")
+scott = pd.read_csv("scott_subject_features.csv")
+
+combined = pd.concat([caroline, noor, scott], ignore_index=True)
+
+combined.to_csv("combined_subject_features.csv", index=False)
 ```
