@@ -13,12 +13,12 @@ ls
 
 3. Show pipeline structure
 
-Expected:
+Point out directory organization:
 
-* data/
-* output/
-* scripts/
-* license/
+* data/ → BIDS input subjects
+* output/ → DeepPrep derivatives
+* scripts/ → automation + reproducibility
+* license/ → FreeSurfer license
 
 4. Show processed outputs
 ```
