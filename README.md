@@ -56,7 +56,7 @@ The pipeline processes subject-level data from [OpenNeuro (ds005237)](https://op
 
 A complete walkthrough of the pipeline, including VM execution, preprocessing, and analysis, is available below:
 
-▶️ YouTube Demo (Unlisted): [ADD LINK HERE]
+▶️ YouTube Demo (Unlisted): https://youtu.be/nuVT9tjOurw?si=QB9XyyWGgDfG6hY0
 
 The demo includes:
 - FABRIC VM setup and execution
